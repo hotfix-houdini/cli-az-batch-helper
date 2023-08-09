@@ -1,9 +1,7 @@
 ﻿// See https://aka.ms/new-console-template for more information
 using AzBatchHelper.Cli.Commands.Generate.ScheduledJobConfig;
+using AzBatchHelper.Cli.Services.File;
 using System.CommandLine;
-
-Console.WriteLine("Hello, World!");
-
 
 var generateScheduledJobConfigCommand = new Command("scheduled-job-config", "Generate a scheduled job json file for creating a scheduled job in Azure Batch.");
 
@@ -27,8 +25,8 @@ generateScheduledJobConfigCommand.AddOption(jobManagerEnvironmentVariablesOption
 generateScheduledJobConfigCommand.SetHandler((outputFile, scheduledJobId, poolId, scheduleRecurrence, scheduleDoNotRunUntil, jobManagerCommandLine, jobManagerImage, jobManagerEnvVars) =>
 {
     var settings = new ScheduledJobConfigSettings(outputFile, scheduledJobId, poolId, scheduleRecurrence, scheduleDoNotRunUntil, jobManagerCommandLine, jobManagerImage, jobManagerEnvVars);
-    // get and invoke handler from DI. 
-
+    var handler = new ScheduledJobConfigHandler(new FileService());
+    return handler.HandleAsync(settings);
 }, outputFileGenerateOption, scheduledJobIdOption, poolOption, scheduleRecurrenceOption, scheduledoNotRunUntilOption, jobManagerCommandLineOption, jobManagerImageOption, jobManagerEnvironmentVariablesOption);
 
 var generateCommand = new Command("generate", description: "Generate an artifact (such as a scheduled job .json file) to aid in Azure Batch configuration.");

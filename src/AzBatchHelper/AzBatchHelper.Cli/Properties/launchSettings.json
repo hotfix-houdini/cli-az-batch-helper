@@ -2,7 +2,7 @@
   "profiles": {
     "AzBatchHelper.Cli": {
       "commandName": "Project",
-      "commandLineArgs": "generate scheduled-job-config"
+      "commandLineArgs": "generate scheduled-job-config \r\n--output output.json \r\n--scheduled-job-id scheduled-job-id \r\n--pool pool-id \r\n--schedule-recurrence PT5M \r\n--schedule-do-not-run-until \"2030-08-07T11:43:00+00:00\" \r\n--job-manager-command-line \"\\\"\\\"\" \r\n--job-manager-image superregistry.azurecr.io/job-manager-poc:1.0.13 \r\n--job-manager-env-vars \"KEY_VAULT_URL=https://some-vault-4212.vault.azure.net,BATCH_ACCOUNT_KEY_SECRET_NAME=test-batch-account-key,MANAGED_IDENTITY_RESOURCE_ID=/subscriptions/11111111-1111-1111-1111-11111111/resourceGroups/bicep-batch-test/providers/Microsoft.ManagedIdentity/userAssignedIdentities/test-managed-identity,IMAGE_NAME=job-execution-poc,IMAGE_TAG=1.0.0,IMAGE_REGISTRY=supertestregistry4billion.azurecr.io\""
     }
   }
 }
