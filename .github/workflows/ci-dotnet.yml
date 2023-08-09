@@ -8,7 +8,7 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-
     steps:
     - uses: actions/checkout@v3
     - name: Setup .NET
@@ -16,8 +16,8 @@ jobs:
       with:
         dotnet-version: 7.0.x
     - name: Restore dependencies
-      run: dotnet restore
+      run: dotnet restore src/AzBatchHelper/
     - name: Build
-      run: dotnet build --no-restore
+      run: dotnet build --no-restore src/AzBatchHelper/
     - name: Test
-      run: dotnet test --no-build --verbosity normal
+      run: dotnet test --no-build --verbosity normal src/AzBatchHelper/
