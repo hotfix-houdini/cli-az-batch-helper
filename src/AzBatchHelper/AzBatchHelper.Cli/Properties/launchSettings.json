@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "AzBatchHelper.Cli": {
+      "commandName": "Project",
+      "commandLineArgs": "generate scheduled-job-config"
+    }
+  }
+}
