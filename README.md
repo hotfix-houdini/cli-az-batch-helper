@@ -1,3 +1,5 @@
+[![ci-dotnet](https://github.com/hotfix-houdini/cli-az-batch-helper/actions/workflows/ci-dotnet.yml/badge.svg)](https://github.com/hotfix-houdini/cli-az-batch-helper/actions/workflows/ci-dotnet.yml)
+
 # cli-az-batch-helper
 ## Example CLI call (windows)
 ```powershell
