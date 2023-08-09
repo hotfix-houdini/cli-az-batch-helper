@@ -1,4 +1,6 @@
-﻿namespace AzBatchHelper.Cli.Commands.Generate.ScheduledJobConfig;
+﻿using System.Text.RegularExpressions;
+
+namespace AzBatchHelper.Cli.Commands.Generate.ScheduledJobConfig;
 
 public class ScheduledJobConfigSettings
 {
@@ -13,6 +15,11 @@ public class ScheduledJobConfigSettings
 
     public ScheduledJobConfigSettings(FileInfo outputFile, string scheduledJobId, string poolId, string scheduleRecurrence, string? scheduleDoNotRunUntil, string jobManagerCommandLine, string jobManagerImage, string? jobManagerEnvironmentVariables)
     {
+        if (!Regex.IsMatch(scheduleRecurrence, @"^P(?:(\d+)Y)?(?:(\d+)M)?(?:(\d+)D)?(?:T(?:(\d+)H)?(?:(\d+)M)?(?:(\d+(?:[\.,]\d*)?)S)?)?$"))
+        {
+            throw new ArgumentException($"Invalid ISO-8601 duration format", nameof(ScheduleRecurrence));
+        }
+
         OutputFile = outputFile;
         ScheduledJobId = scheduledJobId;
         PoolId = poolId;

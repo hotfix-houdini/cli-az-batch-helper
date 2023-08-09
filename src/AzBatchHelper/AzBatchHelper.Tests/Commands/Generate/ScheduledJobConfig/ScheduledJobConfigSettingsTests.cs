@@ -1,4 +1,5 @@
 ﻿using AzBatchHelper.Cli.Commands.Generate.ScheduledJobConfig;
+using Moq;
 
 namespace AzBatchHelper.Tests.Commands.Generate.ScheduledJobConfig
 {
@@ -29,6 +30,65 @@ namespace AzBatchHelper.Tests.Commands.Generate.ScheduledJobConfig
             Assert.That(settings.JobManagerImage, Is.EqualTo(DefaultImageName));
             Assert.That(settings.JobManagerEnvironmentVariables, Is.EqualTo(DefaultEnvVars));
         }
+
+        [Theory]
+        [TestCase("PT5M", true)] // 5 minutes
+        [TestCase("P1DT0H0M0S", true)] // 1 day
+        [TestCase("P3Y6M4DT12H30M5S", true)]
+        [TestCase("PT0S", true)]
+        [TestCase("P0D", true)]
+        [TestCase("P1M", true)]
+        [TestCase("PT1M", true)]
+        [TestCase("PT36H", true)]
+        [TestCase("P1DT12H", true)]
+        [TestCase("00:05:00", false, $"Invalid ISO-8601 duration format (Parameter '{nameof(ScheduledJobConfigSettings.ScheduleRecurrence)}')")]
+        [TestCase("5 minutes", false, $"Invalid ISO-8601 duration format (Parameter '{nameof(ScheduledJobConfigSettings.ScheduleRecurrence)}')")]
+        [TestCase("5", false, $"Invalid ISO-8601 duration format (Parameter '{nameof(ScheduledJobConfigSettings.ScheduleRecurrence)}')")]
+        //[TestCase("P0,5Y", true)] // might be valid but can't find appropriate regex
+        //[TestCase("P0.5Y", true)] // might be valid but can't find appropriate regex
+        //[TestCase("P2W", true)] // might be valid but can't find appropriate regex
+        public void ConstructionShouldValidateISO8601DurationForRecurrence(string recurrenceString, bool shouldPassValidation, string? expectedExceptionMessage = null)
+        {
+            // arrange 
+            ScheduledJobConfigSettings? scheduledJobConfigSettings = null;
+            Exception? potentialException = null;
+
+            // act
+            try
+            {
+                scheduledJobConfigSettings = ConstructScheduledJobConfigSettings(scheduleRecurrence: recurrenceString);
+            }
+            catch (Exception ex)
+            {
+                potentialException = ex;
+            }
+
+            // assert
+            if (shouldPassValidation)
+            {
+                Assert.That(potentialException, Is.Null);
+                Assert.That(scheduledJobConfigSettings, Is.Not.Null);
+                Assert.That(scheduledJobConfigSettings?.ScheduleRecurrence, Is.EqualTo(recurrenceString));
+            }
+            else
+            {
+                Assert.That(potentialException, Is.Not.Null);
+                Assert.That(potentialException, Is.TypeOf<ArgumentException>());
+                Assert.That(potentialException?.Message, Is.EqualTo(expectedExceptionMessage));
+            }
+        }
+
+
+        // assert time ISO-8601 timestamp and duration compliance (doNotRunUntil, recurrence)
+        // assert envs are key=value pairs (support comma seperated and new-line seperated)
+        // env var validation
+        // seperated value should be key=value
+        // comma, no new line
+        // new line, no comma
+        // comma and new line
+        // no comma and no new line
+
+
 
         // add validation tests (should throw argument exception)
 
