@@ -78,6 +78,40 @@ namespace AzBatchHelper.Tests.Commands.Generate.ScheduledJobConfig
             }
         }
 
+        [Theory]
+        [TestCase("2030-08-07T11:43:00+00:00", true)]
+        [TestCase("2030-08-07", false, $"Invalid ISO-8601 timestamp format (Parameter '{nameof(ScheduledJobConfigSettings.ScheduleDoNotRunUntil)}')")]
+        public void ConstructionShouldValidateISO8601TimestampForDoNotRunUntil(string doNotRunUntilString, bool shouldPassValidation, string? expectedExceptionMessage = null)
+        {
+            // arrange 
+            ScheduledJobConfigSettings? scheduledJobConfigSettings = null;
+            Exception? potentialException = null;
+
+            // act
+            try
+            {
+                scheduledJobConfigSettings = ConstructScheduledJobConfigSettings(scheduleDoNotRunUntil: doNotRunUntilString);
+            }
+            catch (Exception ex)
+            {
+                potentialException = ex;
+            }
+
+            // assert
+            if (shouldPassValidation)
+            {
+                Assert.That(potentialException, Is.Null);
+                Assert.That(scheduledJobConfigSettings, Is.Not.Null);
+                Assert.That(scheduledJobConfigSettings?.ScheduleDoNotRunUntil, Is.EqualTo(doNotRunUntilString));
+            }
+            else
+            {
+                Assert.That(potentialException, Is.Not.Null);
+                Assert.That(potentialException, Is.TypeOf<ArgumentException>());
+                Assert.That(potentialException?.Message, Is.EqualTo(expectedExceptionMessage));
+            }
+        }
+
 
         // assert time ISO-8601 timestamp and duration compliance (doNotRunUntil, recurrence)
         // assert envs are key=value pairs (support comma seperated and new-line seperated)

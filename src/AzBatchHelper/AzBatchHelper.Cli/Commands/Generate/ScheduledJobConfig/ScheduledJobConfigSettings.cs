@@ -1,4 +1,5 @@
-﻿using System.Text.RegularExpressions;
+﻿using System.Globalization;
+using System.Text.RegularExpressions;
 
 namespace AzBatchHelper.Cli.Commands.Generate.ScheduledJobConfig;
 
@@ -18,6 +19,10 @@ public class ScheduledJobConfigSettings
         if (!Regex.IsMatch(scheduleRecurrence, @"^P(?:(\d+)Y)?(?:(\d+)M)?(?:(\d+)D)?(?:T(?:(\d+)H)?(?:(\d+)M)?(?:(\d+(?:[\.,]\d*)?)S)?)?$"))
         {
             throw new ArgumentException($"Invalid ISO-8601 duration format", nameof(ScheduleRecurrence));
+        }
+        if (scheduleDoNotRunUntil != null && !DateTime.TryParseExact(scheduleDoNotRunUntil, "yyyy'-'MM'-'dd'T'HH':'mm':'ssK", null, DateTimeStyles.RoundtripKind, out _))
+        {
+            throw new ArgumentException($"Invalid ISO-8601 timestamp format", nameof(ScheduleDoNotRunUntil));
         }
 
         OutputFile = outputFile;
