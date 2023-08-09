@@ -135,10 +135,10 @@ IMAGE_REGISTRY=supertestregistry4billion.azurecr.io", 6,
             return new ScheduledJobConfigSettings(new FileInfo("file.json"), scheduledJobId, poolId, recurrence, doNotRunUntil, jobManagerCommandLine, jobManagerImageName, jobManagerEnvVars);
         }
 
-        private const string TestCaseDelimiter = "\r\n" + @"@@@@@@@@@@@@@@@@@@@@@@@@@
+        private static readonly string TestCaseDelimiter = Environment.NewLine + @"@@@@@@@@@@@@@@@@@@@@@@@@@
 @@   CLI inputs above  @@
 @@ Expected JSON below @@
-@@@@@@@@@@@@@@@@@@@@@@@@@" + "\r\n";
+@@@@@@@@@@@@@@@@@@@@@@@@@" + Environment.NewLine;
 
         private const string SmallerTestCaseDelimiter = "!@!";
     }
