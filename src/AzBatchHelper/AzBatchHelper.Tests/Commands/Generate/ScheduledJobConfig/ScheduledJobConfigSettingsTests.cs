@@ -1,5 +1,4 @@
 ﻿using AzBatchHelper.Cli.Commands.Generate.ScheduledJobConfig;
-using Moq;
 
 namespace AzBatchHelper.Tests.Commands.Generate.ScheduledJobConfig
 {
@@ -112,19 +111,60 @@ namespace AzBatchHelper.Tests.Commands.Generate.ScheduledJobConfig
             }
         }
 
+        [Theory]
+        [TestCase(null, true)]
+        [TestCase("key=value", true)]
+        [TestCase("key=value,key2=value2", true)]
+        [TestCase("key=value,key2=value2,", true)]
+        [TestCase(@"key=value
+                    key2=value2", true)]
+        [TestCase("key=value\nkey2=value2", true)]
+        [TestCase("key=value\r\nkey2=value2", true)]
+        [TestCase("key=value\r\n", true)]
+        [TestCase("key=value\n", true)]
+        [TestCase("key=value\nkey2=value2 with a , comma.\nkey3=value3", true)]
+        [TestCase("key=value,,\nkey2=value2", true)]
+        [TestCase("key=value,,key2=value2", false, $"Invalid Environment Variables list - repeated delimiter detected (Parameter '{nameof(ScheduledJobConfigSettings.JobManagerEnvironmentVariables)}')")]
+        [TestCase("key2", false, $"Invalid Environment Variables list - 'key2' does not have a value (Parameter '{nameof(ScheduledJobConfigSettings.JobManagerEnvironmentVariables)}')")]
+        [TestCase("key=", false, $"Invalid Environment Variables list - 'key' does not have a value (Parameter '{nameof(ScheduledJobConfigSettings.JobManagerEnvironmentVariables)}')")]
+        [TestCase("=value42", false, $"Invalid Environment Variables list - no key for value 'value42' (Parameter '{nameof(ScheduledJobConfigSettings.JobManagerEnvironmentVariables)}')")]
+        [TestCase("KEY_VAULT_URL=https://some-vault-4212.vault.azure.net,BATCH_ACCOUNT_KEY_SECRET_NAME=test-batch-account-key,MANAGED_IDENTITY_RESOURCE_ID=/subscriptions/11111111-1111-1111-1111-11111111/resourceGroups/bicep-batch-test/providers/Microsoft.ManagedIdentity/userAssignedIdentities/test-managed-identity,IMAGE_NAME=job-execution-poc,IMAGE_TAG=1.0.0,IMAGE_REGISTRY=supertestregistry4billion.azurecr.io", true)]
+        [TestCase(@"KEY_VAULT_URL=https://some-vault-4212.vault.azure.net
+BATCH_ACCOUNT_KEY_SECRET_NAME=test-batch-account-key
+MANAGED_IDENTITY_RESOURCE_ID=/subscriptions/11111111-1111-1111-1111-11111111/resourceGroups/bicep-batch-test/providers/Microsoft.ManagedIdentity/userAssignedIdentities/test-managed-identity
+IMAGE_NAME=job-execution-poc
+IMAGE_TAG=1.0.0
+IMAGE_REGISTRY=supertestregistry4billion.azurecr.io", true)]
+        public void ConstructionShouldValidateEnvironmentVariables(string envVarString, bool shouldPassValidation, string? expectedExceptionMessage = null)
+        {
+            // arrange 
+            ScheduledJobConfigSettings? scheduledJobConfigSettings = null;
+            Exception? potentialException = null;
 
-        // assert time ISO-8601 timestamp and duration compliance (doNotRunUntil, recurrence)
-        // assert envs are key=value pairs (support comma seperated and new-line seperated)
-        // env var validation
-        // seperated value should be key=value
-        // comma, no new line
-        // new line, no comma
-        // comma and new line
-        // no comma and no new line
+            // act
+            try
+            {
+                scheduledJobConfigSettings = ConstructScheduledJobConfigSettings(jobManagerEnvVars: envVarString);
+            }
+            catch (Exception ex)
+            {
+                potentialException = ex;
+            }
 
-
-
-        // add validation tests (should throw argument exception)
+            // assert
+            if (shouldPassValidation)
+            {
+                Assert.That(potentialException, Is.Null);
+                Assert.That(scheduledJobConfigSettings, Is.Not.Null);
+                Assert.That(scheduledJobConfigSettings?.JobManagerEnvironmentVariables, Is.EqualTo(envVarString));
+            }
+            else
+            {
+                Assert.That(potentialException, Is.Not.Null);
+                Assert.That(potentialException, Is.TypeOf<ArgumentException>());
+                Assert.That(potentialException?.Message, Is.EqualTo(expectedExceptionMessage));
+            }
+        }
 
         public ScheduledJobConfigSettings ConstructScheduledJobConfigSettings(
             FileInfo? outputFile = null,
