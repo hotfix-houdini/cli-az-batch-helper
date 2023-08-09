@@ -1,0 +1,43 @@
+schedule-job-id=schedule-job-id42
+pool-id=pool-id
+recurrnce-interval=PT5M
+do-not-run-until=2030-08-07T11:43:00+00:00
+job-manager-command-line=""
+job-manager-image-name=superregistry.azurecr.io/job-manager-poc:1.0.13
+job-manager-envvars=KEY_VAULT_URL=https://some-vault-4212.vault.azure.net,BATCH_ACCOUNT_KEY_SECRET_NAME=test-batch-account-key,
+@@@@@@@@@@@@@@@@@@@@@@@@@
+@@   CLI inputs above  @@
+@@ Expected JSON below @@
+@@@@@@@@@@@@@@@@@@@@@@@@@
+{
+  "id": "schedule-job-id42",
+  "jobSpecification": {
+    "jobManagerTask": {
+      "commandLine": "\u0022\u0022",
+      "containerSettings": {
+        "imageName": "superregistry.azurecr.io/job-manager-poc:1.0.13"
+      },
+      "environmentSettings": [
+        {
+          "name": "KEY_VAULT_URL",
+          "value": "https://some-vault-4212.vault.azure.net"
+        },
+        {
+          "name": "BATCH_ACCOUNT_KEY_SECRET_NAME",
+          "value": "test-batch-account-key"
+        }
+      ],
+      "id": "job-manager-task",
+      "killJobOnCompletion": false
+    },
+    "onAllTasksComplete": "terminatejob",
+    "poolInfo": {
+      "autoPoolSpecification": null,
+      "poolId": "pool-id"
+    }
+  },
+  "schedule": {
+    "recurrenceInterval": "PT5M",
+    "doNotRunUntil": "2030-08-07T11:43:00\u002B00:00"
+  }
+}

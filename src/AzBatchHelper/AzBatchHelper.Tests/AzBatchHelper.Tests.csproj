@@ -22,4 +22,22 @@
     <ProjectReference Include="..\AzBatchHelper.Cli\AzBatchHelper.Cli.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="Commands\Generate\ScheduledJobConfig\HandlerTestCases\env-var-twopair-trailingcomma.test">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Commands\Generate\ScheduledJobConfig\HandlerTestCases\env-var-twopair.test">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Commands\Generate\ScheduledJobConfig\HandlerTestCases\env-var-singlepair.test">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Commands\Generate\ScheduledJobConfig\HandlerTestCases\env-var-csv.test">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Commands\Generate\ScheduledJobConfig\HandlerTestCases\basic-test.test">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>

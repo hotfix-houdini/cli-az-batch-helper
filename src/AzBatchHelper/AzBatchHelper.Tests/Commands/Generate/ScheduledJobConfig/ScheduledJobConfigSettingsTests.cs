@@ -4,30 +4,21 @@ namespace AzBatchHelper.Tests.Commands.Generate.ScheduledJobConfig
 {
     public class ScheduledJobConfigSettingsTests
     {
-        private const string DefaultFileName = "file.json";
-        private const string DefaultScheduledJobId = "schedule-job-id";
-        private const string DefaultPoolId = "pool-id";
-        private const string DefaultRecurrence = "PT5M";
-        private const string DefaultDoNoRunUntil = null;
-        private const string DefaultJobManagerCommandLine = "\"\"";
-        private const string DefaultImageName = "myregistry.azurecr.io/my-image:1.0.0";
-        private const string DefaultEnvVars = null;
-
         [Test]
         public void AcceptableSettingsShouldPassConstruction()
         {
             // arrange & act
-            var settings = ConstructScheduledJobConfigSettings();
+            var settings = ScheduledJobConfigSettingsTestHelper.ConstructScheduledJobConfigSettings();
 
             // assert
-            Assert.That(settings.OutputFile.Name, Is.EqualTo(DefaultFileName));
-            Assert.That(settings.ScheduledJobId, Is.EqualTo(DefaultScheduledJobId));
-            Assert.That(settings.PoolId, Is.EqualTo(DefaultPoolId));
-            Assert.That(settings.ScheduleRecurrence, Is.EqualTo(DefaultRecurrence));
-            Assert.That(settings.ScheduleDoNotRunUntil, Is.EqualTo(DefaultDoNoRunUntil));
-            Assert.That(settings.JobManagerCommandLine, Is.EqualTo(DefaultJobManagerCommandLine));
-            Assert.That(settings.JobManagerImage, Is.EqualTo(DefaultImageName));
-            Assert.That(settings.JobManagerEnvironmentVariables, Is.EqualTo(DefaultEnvVars));
+            Assert.That(settings.OutputFile.Name, Is.EqualTo(ScheduledJobConfigSettingsTestHelper.DefaultFileName));
+            Assert.That(settings.ScheduledJobId, Is.EqualTo(ScheduledJobConfigSettingsTestHelper.DefaultScheduledJobId));
+            Assert.That(settings.PoolId, Is.EqualTo(ScheduledJobConfigSettingsTestHelper.DefaultPoolId));
+            Assert.That(settings.ScheduleRecurrence, Is.EqualTo(ScheduledJobConfigSettingsTestHelper.DefaultRecurrence));
+            Assert.That(settings.ScheduleDoNotRunUntil, Is.EqualTo(ScheduledJobConfigSettingsTestHelper.DefaultDoNoRunUntil));
+            Assert.That(settings.JobManagerCommandLine, Is.EqualTo(ScheduledJobConfigSettingsTestHelper.DefaultJobManagerCommandLine));
+            Assert.That(settings.JobManagerImage, Is.EqualTo(ScheduledJobConfigSettingsTestHelper.DefaultImageName));
+            Assert.That(settings.JobManagerEnvironmentVariables, Is.EqualTo(ScheduledJobConfigSettingsTestHelper.DefaultEnvVars));
         }
 
         [Theory]
@@ -55,7 +46,7 @@ namespace AzBatchHelper.Tests.Commands.Generate.ScheduledJobConfig
             // act
             try
             {
-                scheduledJobConfigSettings = ConstructScheduledJobConfigSettings(scheduleRecurrence: recurrenceString);
+                scheduledJobConfigSettings = ScheduledJobConfigSettingsTestHelper.ConstructScheduledJobConfigSettings(scheduleRecurrence: recurrenceString);
             }
             catch (Exception ex)
             {
@@ -89,7 +80,7 @@ namespace AzBatchHelper.Tests.Commands.Generate.ScheduledJobConfig
             // act
             try
             {
-                scheduledJobConfigSettings = ConstructScheduledJobConfigSettings(scheduleDoNotRunUntil: doNotRunUntilString);
+                scheduledJobConfigSettings = ScheduledJobConfigSettingsTestHelper.ConstructScheduledJobConfigSettings(scheduleDoNotRunUntil: doNotRunUntilString);
             }
             catch (Exception ex)
             {
@@ -144,7 +135,7 @@ IMAGE_REGISTRY=supertestregistry4billion.azurecr.io", true)]
             // act
             try
             {
-                scheduledJobConfigSettings = ConstructScheduledJobConfigSettings(jobManagerEnvVars: envVarString);
+                scheduledJobConfigSettings = ScheduledJobConfigSettingsTestHelper.ConstructScheduledJobConfigSettings(jobManagerEnvVars: envVarString);
             }
             catch (Exception ex)
             {
@@ -164,20 +155,6 @@ IMAGE_REGISTRY=supertestregistry4billion.azurecr.io", true)]
                 Assert.That(potentialException, Is.TypeOf<ArgumentException>());
                 Assert.That(potentialException?.Message, Is.EqualTo(expectedExceptionMessage));
             }
-        }
-
-        public ScheduledJobConfigSettings ConstructScheduledJobConfigSettings(
-            FileInfo? outputFile = null,
-            string scheduledJobId = DefaultScheduledJobId,
-            string poolId = DefaultPoolId,
-            string scheduleRecurrence = DefaultRecurrence,
-            string? scheduleDoNotRunUntil = DefaultDoNoRunUntil,
-            string jobManagerCommandLine = DefaultJobManagerCommandLine,
-            string jobManagerImage = DefaultImageName,
-            string? jobManagerEnvVars = DefaultEnvVars)
-        {
-            outputFile ??= new FileInfo(DefaultFileName);
-            return new ScheduledJobConfigSettings(outputFile, scheduledJobId, poolId, scheduleRecurrence, scheduleDoNotRunUntil, jobManagerCommandLine, jobManagerImage, jobManagerEnvVars);
         }
     }
 }
