@@ -20,24 +20,33 @@ jobs:
       - name: Build and Publish for macOS
         run: dotnet publish -c Release -r osx-x64 /p:AssemblyName=az-batch-helper --self-contained true /p:PublishSingleFile=true -o ${{ github.workspace }}/publish/osx-x64 src/AzBatchHelper/AzBatchHelper.Cli
         
+        
       - name: Create Release
         id: create_release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tag_name: v1.${{ github.run_number }}
-          release_name: Release 1.${{ github.run_number }}
-          draft: false
-          prerelease: false
+        run: |
+          RELEASE_ID=$(curl -X POST -H "Authorization: token ${{ secrets.GH_TOKEN }}" \
+            -H "Accept: application/vnd.github.v3+json" \
+            https://api.github.com/repos/${{ github.repository }}/releases \
+            -d '{
+              "tag_name": "v1.${{ github.run_number }}",
+              "name": "Release 1.${{ github.run_number }}",
+              "draft": false,
+              "prerelease": false
+            }' | jq -r .id)
+          echo "RELEASE_ID=$RELEASE_ID" >> $GITHUB_ENV
       - name: Upload Release Assets
-        id: upload-release-assets
-        uses: actions/upload-release-assets@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_pattern: |
-            win-x64/az-batch-helper.exe
-            linux-x64/az-batch-helper
-            osx-x64/az-batch-helper
+        run: |
+          curl -X POST -H "Authorization: token ${{ secrets.GH_TOKEN }}" \
+            -H "Content-Type: application/octet-stream" \
+            --data-binary @win-x64/az-batch-helper.exe \
+            https://uploads.github.com/repos/${{ github.repository }}/releases/$RELEASE_ID/assets?name=az-batch-helper.exe
+
+          curl -X POST -H "Authorization: token ${{ secrets.GH_TOKEN }}" \
+            -H "Content-Type: application/octet-stream" \
+            --data-binary @linux-x64/az-batch-helper \
+            https://uploads.github.com/repos/${{ github.repository }}/releases/$RELEASE_ID/assets?name=az-batch-helper
+
+          curl -X POST -H "Authorization: token ${{ secrets.GH_TOKEN }}" \
+            -H "Content-Type: application/octet-stream" \
+            --data-binary @osx-x64/az-batch-helper \
+            https://uploads.github.com/repos/${{ github.repository }}/releases/$RELEASE_ID/assets?name=az-batch-helper
