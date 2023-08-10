@@ -24,8 +24,9 @@ jobs:
       - name: Create Release
         id: create_release
         run: |
-          RELEASE_ID=$(curl -X POST -H "Authorization: token ${{ secrets.GH_TOKEN }}" \
+          RELEASE_ID=$(curl -X POST -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
             -H "Accept: application/vnd.github.v3+json" \
+            --fail \
             https://api.github.com/repos/${{ github.repository }}/releases \
             -d '{
               "tag_name": "v1.${{ github.run_number }}",
@@ -36,17 +37,20 @@ jobs:
           echo "RELEASE_ID=$RELEASE_ID" >> $GITHUB_ENV
       - name: Upload Release Assets
         run: |
-          curl -X POST -H "Authorization: token ${{ secrets.GH_TOKEN }}" \
+          curl -X POST -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
             -H "Content-Type: application/octet-stream" \
+            --fail \
             --data-binary @win-x64/az-batch-helper.exe \
             https://uploads.github.com/repos/${{ github.repository }}/releases/$RELEASE_ID/assets?name=az-batch-helper.exe
 
-          curl -X POST -H "Authorization: token ${{ secrets.GH_TOKEN }}" \
+          curl -X POST -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
             -H "Content-Type: application/octet-stream" \
+            --fail \
             --data-binary @linux-x64/az-batch-helper \
             https://uploads.github.com/repos/${{ github.repository }}/releases/$RELEASE_ID/assets?name=az-batch-helper
 
-          curl -X POST -H "Authorization: token ${{ secrets.GH_TOKEN }}" \
+          curl -X POST -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
             -H "Content-Type: application/octet-stream" \
+            --fail \
             --data-binary @osx-x64/az-batch-helper \
             https://uploads.github.com/repos/${{ github.repository }}/releases/$RELEASE_ID/assets?name=az-batch-helper
