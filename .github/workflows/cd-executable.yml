@@ -17,17 +17,17 @@ jobs:
         with:
           dotnet-version: '7.0.x'
       - name: Build and Publish for Linux
-        run: dotnet publish -c Release -r linux-x64 /p:AssemblyName=az-batch-helper --self-contained true /p:PublishSingleFile=true -o ${{ github.workspace }}/publish/linux-x64 src/AzBatchHelper/AzBatchHelper.Cli
+        run: dotnet publish -c Release -r linux-x64 /p:AssemblyName=az-batch-helper-linux-x64 --self-contained true /p:PublishSingleFile=true -o ${{ github.workspace }}/publish/linux-x64 src/AzBatchHelper/AzBatchHelper.Cli
       - name: Build and Publish for Windows
-        run: dotnet publish -c Release -r win-x64 /p:AssemblyName=az-batch-helper --self-contained true /p:PublishSingleFile=true -o ${{ github.workspace }}/publish/win-x64 src/AzBatchHelper/AzBatchHelper.Cli
+        run: dotnet publish -c Release -r win-x64 /p:AssemblyName=az-batch-helper-win-x64 --self-contained true /p:PublishSingleFile=true -o ${{ github.workspace }}/publish/win-x64 src/AzBatchHelper/AzBatchHelper.Cli
       - name: Build and Publish for macOS
-        run: dotnet publish -c Release -r osx-x64 /p:AssemblyName=az-batch-helper --self-contained true /p:PublishSingleFile=true -o ${{ github.workspace }}/publish/osx-x64 src/AzBatchHelper/AzBatchHelper.Cli
+        run: dotnet publish -c Release -r osx-x64 /p:AssemblyName=az-batch-helper-osx-x64 --self-contained true /p:PublishSingleFile=true -o ${{ github.workspace }}/publish/osx-x64 src/AzBatchHelper/AzBatchHelper.Cli
         
       - name: Release
         uses: softprops/action-gh-release@v1
         with:
           tag_name: "v1.${{ github.run_number }}"
           files: |
-            ${{ github.workspace }}/publish/win-x64/az-batch-helper.exe
-            ${{ github.workspace }}/publish/linux-x64/az-batch-helper
-            ${{ github.workspace }}/publish/osx-x64/az-batch-helper
+            ${{ github.workspace }}/publish/win-x64/az-batch-helper-win-x64.exe
+            ${{ github.workspace }}/publish/linux-x64/az-batch-helper-linux-x64
+            ${{ github.workspace }}/publish/osx-x64/az-batch-helper-osx-x64
