@@ -1,5 +1,11 @@
 [![ci-dotnet](https://github.com/hotfix-houdini/cli-az-batch-helper/actions/workflows/ci-dotnet.yml/badge.svg)](https://github.com/hotfix-houdini/cli-az-batch-helper/actions/workflows/ci-dotnet.yml)
 
+- [Overview](#overview)
+- [Example CLI Calls](#example-cli-calls)
+  * [Windows](#windows)
+  * [Linux](#linux)
+- [Running in a GHA Workflow](#running-in-a-gha-workflow)
+
 # Overview
 A Self Contained .NET 7 CLI that generates a JSON file that can subsequently be used to create a Scheduled Job in Azure Batch.
 
@@ -113,4 +119,34 @@ az batch job-schedule create `
     --schedule-do-not-run-until "2030-08-07T11:43:00+00:00" \
     --job-manager-image "myregistry.azurecr.io/job-manager-poc:1.0.13" \
     --job-manager-env-vars "KEY_VAULT_URL=https://my-key-vault.vault.azure.net,BATCH_ACCOUNT_KEY_SECRET_NAME=test-batch-account-key-secret-name,MANAGED_IDENTITY_RESOURCE_ID=/subscriptions/11111111-1111-1111-1111-11111111/resourceGroups/bicep-batch-test/providers/Microsoft.ManagedIdentity/userAssignedIdentities/test-managed-identity,IMAGE_NAME=job-execution-poc,IMAGE_TAG=1.0.0,IMAGE_REGISTRY=myregistry.azurecr.io"
+```
+# Running in a GHA Workflow
+```shell
+- name: Download az-batch-helper CLI
+  run: |
+      curl -LO https://github.com/hotfix-houdini/cli-az-batch-helper/releases/download/v1.6/az-batch-helper-linux-x64
+- name: Make CLI executable
+  run: chmod +x az-batch-helper-linux-x64
+- name: Create Scheduled job JSON file
+  run: |
+    ./az-batch-helper-linux-x64 generate scheduled-job-config \
+      --output scheduled-job.json \
+      --scheduled-job-id job-schedule-cicd \
+      --pool my-pool \
+      --schedule-recurrence PT5M \
+      --schedule-do-not-run-until "2030-08-07T11:43:00+00:00" \
+      --job-manager-image "myregistry.azurecr.io/job-manager-poc:1.0.13" \
+      --job-manager-env-vars "\
+        KEY_VAULT_URL=https://my-key-vault.vault.azure.net,\
+        BATCH_ACCOUNT_KEY_SECRET_NAME=test-batch-account-key-secret-name,\
+        MANAGED_IDENTITY_RESOURCE_ID=/subscriptions/11111111-1111-1111-1111-11111111/resourceGroups/bicep-batch-test/providers/Microsoft.ManagedIdentity/userAssignedIdentities/test-managed-identity,\
+        IMAGE_NAME=job-execution-poc,\
+        IMAGE_TAG=1.0.0,\
+        IMAGE_REGISTRY=myregistry.azurecr.io"
+- name: Create schedule job 
+  run: |
+    az batch job-schedule create \
+      --account-name "$BATCH_ACCOUNT_NAME" \
+      --account-endpoint "$BATCH_ACCOUNT_ENDPOINT" \
+      --json-file scheduled-job.json
 ```
