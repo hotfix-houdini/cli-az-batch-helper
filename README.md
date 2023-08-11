@@ -1,7 +1,9 @@
 [![ci-dotnet](https://github.com/hotfix-houdini/cli-az-batch-helper/actions/workflows/ci-dotnet.yml/badge.svg)](https://github.com/hotfix-houdini/cli-az-batch-helper/actions/workflows/ci-dotnet.yml)
 
 # Overview
-A Self Contained .NET 7 CLI that generates a JSON file that can subsequently be used to create a Scheduled Job in Azure Batch. 
+A Self Contained .NET 7 CLI that generates a JSON file that can subsequently be used to create a Scheduled Job in Azure Batch.
+
+Download the appropiate exeucutable for your OS in the Releases section.
 
 ```shell
 root@94129eddf6a0:/source# ./az-batch-helper generate scheduled-job-config
@@ -32,7 +34,7 @@ Options:
 # Example CLI Calls
 ## Windows
 ```powershell
-.\az-batch-helper.exe generate scheduled-job-config `
+.\az-batch-helper-win-x64.exe generate scheduled-job-config `
     --output output.json `
     --scheduled-job-id job-schedule-cicd `
     --pool my-pool `
@@ -103,7 +105,7 @@ az batch job-schedule create `
 ```
 ## Linux
 ```shell
-./az-batch-helper generate scheduled-job-config \
+./az-batch-helper-linux-x64 generate scheduled-job-config \
     --output output.json \
     --scheduled-job-id job-schedule-cicd \
     --pool my-pool \
