@@ -28,6 +28,6 @@ jobs:
         with:
           tag_name: "v1.${{ github.run_number }}"
           files: |
-            ${{ github.workspace }}/publish/win-x64
-            ${{ github.workspace }}/publish/linux-x64
-            ${{ github.workspace }}/publish/osx-x64
+            ${{ github.workspace }}/publish/win-x64/az-batch-helper.exe
+            ${{ github.workspace }}/publish/linux-x64/az-batch-helper
+            ${{ github.workspace }}/publish/osx-x64/az-batch-helper
