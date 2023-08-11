@@ -3,6 +3,9 @@ name: cd-executable
 on:
   workflow_dispatch:
   
+permissions:
+  contents: write
+  
 jobs:
   build-publish:
     runs-on: ubuntu-latest
@@ -20,37 +23,11 @@ jobs:
       - name: Build and Publish for macOS
         run: dotnet publish -c Release -r osx-x64 /p:AssemblyName=az-batch-helper --self-contained true /p:PublishSingleFile=true -o ${{ github.workspace }}/publish/osx-x64 src/AzBatchHelper/AzBatchHelper.Cli
         
-        
-      - name: Create Release
-        id: create_release
-        run: |
-          RELEASE_ID=$(curl -X POST -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
-            -H "Accept: application/vnd.github.v3+json" \
-            --fail \
-            https://api.github.com/repos/${{ github.repository }}/releases \
-            -d '{
-              "tag_name": "v1.${{ github.run_number }}",
-              "name": "Release 1.${{ github.run_number }}",
-              "draft": false,
-              "prerelease": false
-            }' | jq -r .id)
-          echo "RELEASE_ID=$RELEASE_ID" >> $GITHUB_ENV
-      - name: Upload Release Assets
-        run: |
-          curl -X POST -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
-            -H "Content-Type: application/octet-stream" \
-            --fail \
-            --data-binary @win-x64/az-batch-helper.exe \
-            https://uploads.github.com/repos/${{ github.repository }}/releases/$RELEASE_ID/assets?name=az-batch-helper.exe
-
-          curl -X POST -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
-            -H "Content-Type: application/octet-stream" \
-            --fail \
-            --data-binary @linux-x64/az-batch-helper \
-            https://uploads.github.com/repos/${{ github.repository }}/releases/$RELEASE_ID/assets?name=az-batch-helper
-
-          curl -X POST -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
-            -H "Content-Type: application/octet-stream" \
-            --fail \
-            --data-binary @osx-x64/az-batch-helper \
-            https://uploads.github.com/repos/${{ github.repository }}/releases/$RELEASE_ID/assets?name=az-batch-helper
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: "v1.${{ github.run_number }}"
+          files: |
+            ${{ github.workspace }}/publish/win-x64
+            ${{ github.workspace }}/publish/linux-x64
+            ${{ github.workspace }}/publish/osx-x64
