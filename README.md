@@ -9,7 +9,7 @@
 # Overview
 A Self Contained .NET 7 CLI that generates a JSON file that can subsequently be used to create a Scheduled Job in Azure Batch.
 
-Download the appropiate exeucutable for your OS in the Releases section.
+Download the appropriate exeucutable for your OS in the Releases section.
 
 ```shell
 root@94129eddf6a0:/source# ./az-batch-helper generate scheduled-job-config
